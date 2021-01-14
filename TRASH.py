@@ -1,1 +1,1 @@
-# init db here later
+# init mongo db here later
