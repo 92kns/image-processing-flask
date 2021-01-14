@@ -1,0 +1,22 @@
+
+{% block body %}
+<body>
+          <ul class="menu">
+            <li><a href="{{ url_for('homePage') }}">Home</a></li>
+            <li><a href="{{ url_for('imageProcessing1') }}">Image Processing Form</a></li>
+          </ul>
+<div class="container">
+	<br>
+	<h4>Enter image processing parameters</h4>
+	<h4>Filter types options: grayscale, lowpass, crop, dx, dy, downsample, rotate</h4>
+	<h4> Filter value will be required for 'lowpass' (pixel standard deviation), 'downsample', or 'rotate'(angle in degrees). </h4>
+	<br>
+	<form action="" class="form-inline" method="post">
+		<input type="text" class="form-control" placeholder = "Image name" name="imagename" value="{{request.form.imagename}}">
+		<input type="text" class="form-control" placeholder = "Filter type" name="filtertype" value="{{request.form.filtertype}}">
+		<input type="text" class="form-control" placeholder = "Filter value" name="filterval" value="{{request.form.filterval}}">
+		<input class="btn btn-default" type="submit" value="Go">
+	</form>
+</div>
+</body>
+{% endblock %}

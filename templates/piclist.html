@@ -1,0 +1,26 @@
+
+{% block body %}
+<body>
+          <ul class="menu">
+            <li><a href="{{ url_for('homePage') }}">Home</a></li>
+            <li><a href="{{ url_for('imageProcessing1') }}">Image Processing Form</a></li>
+          </ul>
+<div class="container">
+	<br>
+	<h4>Enter image browsing parameters</h4>
+	<br>
+	<form action="" class="form-inline" method="post">
+		<input type="number" step="any" class="form-control" placeholder = "Max width" name="max_width" value="{{request.form.max_width}}">
+		<input type="number" step="any" class="form-control" placeholder = "Min area" name="min_area" value="{{request.form.min_area}}">
+		<input type="number" step="any" class="form-control" placeholder = "min bits per pixel" name="min_bits_per_pix" value="{{request.form.min_bits_per_pix}}">
+		<input class="btn btn-default" type="submit" value="Go">
+	</form>
+</div>
+</body>
+{% endblock %}
+
+<h5>OPTIONS</h5>
+{% for item in data %}
+    <p> {{ item['imagename'], item['width'], item['width']*item['height']  }} </p>
+{% endfor %}
+
