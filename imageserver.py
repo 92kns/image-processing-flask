@@ -11,6 +11,8 @@ import glob
 from PIL import Image
 
 def get_image_metadata(filename):
+	# the Image.open method conveniently does not fully load the image into memory
+	# thus easy to quickly grab metadata without burden if it was a really big image!
 	im = Image.open(filename)
 	width, height = im.size
 	size = os.stat(filename).st_size //1024 #convert to kb
@@ -52,27 +54,41 @@ app.secret_key = 'some_secret'
 def homePage():
 	if request.method=="POST":
 		max_width = request.form['max_width']
-		min_area = request.form['min_area']
-		min_bits_per_pix = request.form['min_bits_per_pix']
-		return redirect(url_for('imageBrowser', max_width = max_width, min_area=min_area, mbpp = min_bits_per_pix))
+		max_height = request.form['max_height']
+		# bits per pixel could be a fun query paramater later on!
+		# min_bits_per_pix = request.form['min_bits_per_pix']
+
+		if max_width == '' or max_height == '':
+			flash('BAD')
+			return render_template("pleasegoback.html")
+		return redirect(url_for('imageBrowser', max_width = max_width, max_height=max_height))
 	return render_template("piclist.html",data=meta_list)
 
-@app.route('/list/max_width_<float:max_width>min_area_<float:min_area>min_bits_per_pix_<float:mbpp>',methods = ["GET","POST"])
-def imageBrowser(max_width,min_area,mbpp):
+@app.route('/list/max_width_<int:max_width>_max_height_<int:max_height>',methods = ["GET","POST"])
+def imageBrowser(max_width,max_height):
 	queryPics=[] # initialize empty list
 	
 	#find all pictures meeting criteria
 	for pics in db.imagedb.find():
-		if (pics['width'] < max_width) and (pics['width']*pics['height']>min_area) and (1000.0*pics['size']/(pics['width']*pics['height']) > mbpp):
+		# if (pics['width'] < max_width) and (pics['width']*pics['height']>max_height) and (1000.0*pics['size']/(pics['width']*pics['height']) > mbpp):
+		if (pics['width'] <= max_width) and (pics['height'] <= max_height):
+		
 			queryPics.append(pics['imagename'])
 	
 	#option to refresh page based on new query parameters
 	if request.method=="POST":
 		max_width = request.form['max_width']
-		min_area = request.form['min_area']
-		min_bits_per_pix = request.form['min_bits_per_pix']
-		return redirect(url_for('imageBrowser', max_width = max_width, min_area=min_area, mbpp = min_bits_per_pix))
+		max_height = request.form['max_height']
+		# min_bits_per_pix = request.form['min_bits_per_pix']
+		if max_width == '' or max_height == '':
+			flash('BAD')
+			return render_template("pleasegoback.html") 
+		return redirect(url_for('imageBrowser', max_width = max_width, max_height=max_height))
 
+	print(queryPics)
+	print('hereereere')
+
+	
 	return render_template("piclist.html",data=queryPics)
 
 @app.route('/image',methods = ["GET","POST"])
@@ -160,19 +176,13 @@ def imageProcessing2(imagename,filtertype,filterval):
 	# return full_filename image to server
 	return render_template('imageproc.html', full_file = '/static/'+full_filename)
 
-
-@app.route('/log')
-def imageLog():
-   
-	return 'list 100 most recent requests'
-
-@app.route('/serverstats')
-def serverStatistics():
-   
-	return 'return CPU,RAM,and uptime'
+# help debug and seperate out specific exceptions
+class ImageServerException(Exception):
+	pass
 
 
 if __name__ == '__main__':
 
 	app.run(debug=True)
 	# app.run(debug=True, host = '0.0.0.0')
+
