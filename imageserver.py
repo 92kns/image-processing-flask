@@ -14,6 +14,7 @@ import io
 # ------------ db stuff
 
 
+
 def get_image_metadata(filename):
 	# the Image.open method conveniently does not fully load the image into memory
 	# thus easy to quickly grab metadata without burden if it was a really big image!
@@ -33,32 +34,45 @@ def get_image_list():
 	im_path_list = glob.glob(os.path.join(cwd,im_static,'*jpg'))
 	return im_path_list
 
-client = MongoClient()
+# client = MongoClient()
 
-db = client.imagedb
-db.imagedb.delete_many({})
-im_path_list = get_image_list()
+# db = client.imagedb
+# db.imagedb.delete_many({})
+# im_path_list = get_image_list()
 
-# init the db
-meta_list = []
-for i in im_path_list:
-	meta_data_dump = get_image_metadata(i)
-	meta_list.append(meta_data_dump)
-	db.imagedb.insert_one(meta_data_dump)
+# # init the db
+# meta_list = []
+# for i in im_path_list:
+# 	meta_data_dump = get_image_metadata(i)
+# 	meta_list.append(meta_data_dump)
+# 	db.imagedb.insert_one(meta_data_dump)
 
-print(db.imagedb.count_documents({}))
-# def get_db():
-# 	client = MongoClient()
-# 	db = client.imagedb
-# 	im_path_list = get_image_list()
-# 	meta_list = []
-# 	for i in im_path_list:
-# 		meta_data_dump = get_image_metadata(i)
-# 		meta_list.append(meta_data_dump)
-# 		db.imagedb.insert_one(meta_data_dump)
-# 	return db, meta_list
+# print(db.imagedb.count_documents({}))
+def get_db():
+	# config = {
+    # "username": "root",
+    # "password": "Secret",
+    # "server": "mongo",
+	# }
 
-# db, meta_list = get_db()
+	# connector = "mongodb://{}:{}@{}".format(config["username"], config["password"], config["server"])
+	# client = MongoClient(connector)
+# db = client["demo"]
+
+
+
+	# client = MongoClient()
+	client = MongoClient('mongodb://mongodb:27017/')
+	db = client.imagedb
+	im_path_list = get_image_list()
+	meta_list = []
+	for i in im_path_list:
+		meta_data_dump = get_image_metadata(i)
+		meta_list.append(meta_data_dump)
+		db.imagedb.insert_one(meta_data_dump)
+	return db, meta_list
+
+db, meta_list = get_db()
 
 # -=------------------- end db stuff
 
@@ -236,8 +250,8 @@ class ImageServerException(Exception):
 
 if __name__ == '__main__':
 
-	app.run(debug=True)
-	# app.run(debug=True, host = '0.0.0.0')
+	# app.run(debug=True)
+	app.run(debug=True, host = '0.0.0.0')
 
 # <option> <a href="{{url_for('imviewer', imagename = item['imagename'])}}">  {{ item['imagename'], 'width', item['width'],'height', item['height']  }}</a> </option>
 # {% e
