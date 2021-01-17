@@ -9,7 +9,11 @@ import os
 import glob
 
 from PIL import Image
+import base64
+import io
 # ------------ db stuff
+
+
 def get_image_metadata(filename):
 	# the Image.open method conveniently does not fully load the image into memory
 	# thus easy to quickly grab metadata without burden if it was a really big image!
@@ -132,10 +136,6 @@ def imageBrowser(max_width,max_height):
 
 @app.route('/imviewer', methods =["GET","POST"])
 def imviewer():
-	# imagename=request.form['imagename']
-	imagename=request.form['name']
-	for i in range(100):
-		print(request.form)
 	return render_template('viewimage.html', full_file = '/static/'+imagename+'.jpg')
 
 
@@ -156,13 +156,12 @@ def imageProcessing2(imagename,filtertype,filterval):
 	#main image processing function
 
 # read in function then compute RGB channel averages to get gray scale
-	full_filename = '/static/'+imagename+'.jpg'
-	path2file = '.'+full_filename
+	path2file = os.path.join('./static',imagename+'.jpg')
 	im = plt.imread(path2file)
 	im.dtype='uint8' #just in case frce 0, 255 channels
 	x,y,z = im.shape
 	imgray=im.mean(axis=-1,keepdims=1)
-	
+	cmap_type = 'bwr'
 
 	# filtertype = 'downsample'
     # use new full_filename for saving images to be used in template
@@ -171,51 +170,69 @@ def imageProcessing2(imagename,filtertype,filterval):
 	if request.method=="GET":
 		if filtertype=='grayscale':
             # already computed above
-			plt.imsave('./static/'+full_filename,imgray[:,:,0],cmap='gray')
+			processed_im = imgray[:,:,0] #im.mean(axis=-1,keepdims=1)
+			
+			cmap_type = 'gray'
+			# plt.imsave('./static/'+full_filename,imgray[:,:,0],cmap='gray')
 		if filtertype == 'lowpass':
 			 # standard deviation for the gaussian filter, then fft convolve it with image
-		    kernel = np.outer(signal.gaussian(x, filterval), signal.gaussian(y, filterval))
-		    blurredIm = signal.fftconvolve(im[:,:,0], kernel, mode='same')
+		    # kernel = np.outer(signal.gaussian(x, filterval), signal.gaussian(y, filterval))
+		    processed_im = ndimage.gaussian_filter(input=im,sigma=filterval)
+		    # processed_im = processed_im[:,:,0]
 		    
-		    plt.imsave('./static/'+full_filename,blurredIm,cmap='gray')
+		    # plt.imsave('./static/'+full_filename,blurredIm,cmap='gray')
 		if filtertype == 'crop':
             #approx coords for center pixel
 		    ymid = int(y/2)
 		    xmid = int(x/2)
             # shortest certesian direction dictates where square cut off will occur
 		    if x<y:
-		        cropim = im[:,ymid-xmid:ymid+xmid,0]
+		        processed_im= imgray[:,ymid-xmid:ymid+xmid,0]
 		    else:
-		        cropim = im[xmid-ymid:xmid+ymid,:,0]
+		        processed_im = imgray[xmid-ymid:xmid+ymid,:,0]
+		    processed_im = processed_im[:,:,0]
 
-		    plt.imsave('./static/'+full_filename,cropim,cmap='gray')
+		    # plt.imsave('./static/'+full_filename,cropim,cmap='gray')
 
 		if filtertype == 'dx':
             #gradient in x direction along each x 1D array
-		    imx = np.zeros(im.shape)
+		    processed_im = np.zeros(im.shape)
 		    for i in list(range(0,y)):
-		        imx[:,i,0] = np.gradient(im[:,i,0],0.1)
+		        processed_im[:,i,0] = np.gradient(imgray[:,i,0],0.1)
 		    
-		    plt.imsave('./static/'+full_filename,imx[:,:,0],cmap='gray')
+		    processed_im = processed_im[:,:,0]
+		    # plt.imsave('./static/'+full_filename,imx[:,:,0],cmap='gray')
 
 		if filtertype == 'dy':
             #gradient in y dir, along eeach 1d array
-		    imy = np.zeros(im.shape)
+		    processed_im = np.zeros(im.shape)
 		    for i in list(range(0,x)):
-		        imy[i,:,0] = np.gradient(im[i,:,0],0.1)
-		    plt.imsave('./static/'+full_filename,imy[:,:,0],cmap='gray')
+		        processed_im[i,:,0] = np.gradient(imgray[i,:,0],0.1)
+
+		    processed_im = processed_im[:,:,0]
+		    # plt.imsave('./static/'+full_filename,imy[:,:,0],cmap='gray')
 
 		if filtertype == 'rotate':
             # rotation in degrees
-		    rotgray = ndimage.rotate(im,filterval)
-		    plt.imsave('./static/'+full_filename,rotgray[:,:,0],cmap='bwr')
+		    processed_im = ndimage.rotate(im,filterval)
+		    processed_im = processed_im[:,:,0]
+		    # plt.imsave('./static/'+full_filename,rotgray[:,:,0],cmap='bwr')
 
-		if filtertype == 'downsample':
-            # this still needs work
-			intSampler = int(np.round(filterval))
-			imgrayDS=signal.decimate(im[:,:,0],intSampler)
-			plt.imsave('./static/'+full_filename,imgrayDS,cmap='gray')
-	## option to reset results with new query		
+
+		# plt.imsave('./static/'+full_filename,processed_im,cmap=cmap_type)
+
+		
+
+		# stash image in memory rather than writing to disk
+		# use PIL and IO encoding
+		proc_im_pil = Image.fromarray(processed_im).convert('RGB')
+		# if proc_im_pil.mode != 'RGB':
+		# 	proc_im_pil = proc_im_pil.convert('RGB')
+		data = io.BytesIO()
+		proc_im_pil.save(data, "JPEG")
+		encoded_img_data = base64.b64encode(data.getvalue())
+		# encoded_img_data
+	## pseudo refresh page - > option to reset results with new query-> then render filter		
 	if request.method =="POST":
 		picname = request.form['imagename']
 		filtertype=request.form['filtertype']
@@ -223,7 +240,7 @@ def imageProcessing2(imagename,filtertype,filterval):
 		return redirect(url_for("imageProcessing2", imagename = picname, filtertype = filtertype, filterval= filterval))	
 
 	# return full_filename image to server
-	return render_template('imageproc.html', full_file = '/static/'+full_filename)
+	return render_template('imageproc.html', full_file = '/static/'+full_filename, img_data=encoded_img_data.decode('utf-8'))
 
 # help debug and seperate out specific exceptions
 class ImageServerException(Exception):
