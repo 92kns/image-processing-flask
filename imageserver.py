@@ -34,35 +34,10 @@ def get_image_list():
 	im_path_list = glob.glob(os.path.join(cwd,im_static,'*jpg'))
 	return im_path_list
 
-# client = MongoClient()
-
-# db = client.imagedb
-# db.imagedb.delete_many({})
-# im_path_list = get_image_list()
-
-# # init the db
-# meta_list = []
-# for i in im_path_list:
-# 	meta_data_dump = get_image_metadata(i)
-# 	meta_list.append(meta_data_dump)
-# 	db.imagedb.insert_one(meta_data_dump)
-
-# print(db.imagedb.count_documents({}))
 def get_db():
-	# config = {
-    # "username": "root",
-    # "password": "Secret",
-    # "server": "mongo",
-	# }
 
-	# connector = "mongodb://{}:{}@{}".format(config["username"], config["password"], config["server"])
-	# client = MongoClient(connector)
-# db = client["demo"]
-
-
-
-	client = MongoClient()
-	# client = MongoClient('mongodb://mongodb:27017/')
+	# client = MongoClient()
+	client = MongoClient('mongodb://mongodb:27017/')
 	db = client.imagedb
 	im_path_list = get_image_list()
 	meta_list = []
@@ -74,26 +49,13 @@ def get_db():
 
 db, meta_list = get_db()
 
-# -=------------------- end db stuff
 
-
-
-# refactor this ugly list
-# listOfNames = []
-
-# for a in db.imagedb.find():
-# 	listOfNames.append(a['imagename'])
-# # DB stuff above
-
-
-# app = Flask(__name__,static_url_path='/static')
-# app = Flask(__name__)
-# app.secret_key = 'some_secret'
 
 def create_app():
     app = Flask(__name__)
 
     return app
+
 app = create_app()
 
 @app.route('/',methods = ["GET","POST"])
@@ -101,11 +63,10 @@ def homePage():
 	if request.method=="POST":
 		max_width = request.form['max_width']
 		max_height = request.form['max_height']
-		# bits per pixel could be a fun query paramater later on!
+		# bits per pixel could be a fun query paramater in the future!
 		# min_bits_per_pix = request.form['min_bits_per_pix']
 
 		if max_width == '' or max_height == '':
-			# flash('BAD')
 			return render_template("pleasegoback.html")
 		return redirect(url_for('imageBrowser', max_width = max_width, max_height=max_height))
 	
@@ -131,12 +92,6 @@ def imageBrowser(max_width,max_height):
 			return render_template("pleasegoback.html") 
 		return redirect(url_for('imageBrowser', max_width = max_width, max_height=max_height))
 
-	# print(queryPics)
-	# print('hereereere')
-
-	# print(set(queryPics))
-	print('what the heck??')
-	print(queryPics.count())
 	return render_template("piclist.html",data=queryPics)
 
 @app.route('/imviewer', methods =["GET","POST"])
