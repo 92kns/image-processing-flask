@@ -19,8 +19,17 @@
 </body>
 
 
+
+
 <h5>CLICK TO VIEW QUERIED IMAGES</h5>
+
+<form action = "/imviewer" method="POST">
+<select name="name">
 {% for item in data %}
-    <li> <a href="{{url_for('imviewer', imagename = item['imagename'])}}">  {{ item['imagename'], 'width', item['width'],'height', item['height']  }}</a> </li>
+    <option  value="{{item.imagename}}">   {{ item['imagename'], 'width', item['width'],'height', item['height']  }}</option>
 {% endfor %}
+</select>
+<input type="submit" value= "view image"></input>
+</form>
+
 {% endblock %}

@@ -1,1 +1,12 @@
-<img src="{{full_file}}" />
+{% extends 'base.html' %}
+
+{% block content %}
+<body>
+    <ul class="menu">
+        <li><a href="{{ url_for('homePage') }}">Home</a></li>
+        <li><a href="{{ url_for('imageProcessing1') }}">Image Processing Form</a></li>
+    </ul>
+</body>
+<img  src="{{full_file}}" />
+
+{% endblock %}

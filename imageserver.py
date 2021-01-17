@@ -69,7 +69,8 @@ def get_db():
 # # DB stuff above
 
 
-app = Flask(__name__,static_url_path='/static')
+# app = Flask(__name__,static_url_path='/static')
+app = Flask(__name__)
 app.secret_key = 'some_secret'
 
 @app.route('/',methods = ["GET","POST"])
@@ -129,8 +130,12 @@ def imageBrowser(max_width,max_height):
 	print(queryPics.count())
 	return render_template("piclist.html",data=queryPics)
 
-@app.route('/imviewer/<string:imagename>', methods =["GET","POST"])
-def imviewer(imagename):
+@app.route('/imviewer', methods =["GET","POST"])
+def imviewer():
+	# imagename=request.form['imagename']
+	imagename=request.form['name']
+	for i in range(100):
+		print(request.form)
 	return render_template('viewimage.html', full_file = '/static/'+imagename+'.jpg')
 
 
@@ -154,7 +159,7 @@ def imageProcessing2(imagename,filtertype,filterval):
 	full_filename = '/static/'+imagename+'.jpg'
 	path2file = '.'+full_filename
 	im = plt.imread(path2file)
-	im.dtype='uint8'
+	im.dtype='uint8' #just in case frce 0, 255 channels
 	x,y,z = im.shape
 	imgray=im.mean(axis=-1,keepdims=1)
 	
@@ -170,7 +175,7 @@ def imageProcessing2(imagename,filtertype,filterval):
 		if filtertype == 'lowpass':
 			 # standard deviation for the gaussian filter, then fft convolve it with image
 		    kernel = np.outer(signal.gaussian(x, filterval), signal.gaussian(y, filterval))
-		    blurredIm = signal.fftconvolve(imgray[:,:,0], kernel, mode='same')
+		    blurredIm = signal.fftconvolve(im[:,:,0], kernel, mode='same')
 		    
 		    plt.imsave('./static/'+full_filename,blurredIm,cmap='gray')
 		if filtertype == 'crop':
@@ -179,36 +184,36 @@ def imageProcessing2(imagename,filtertype,filterval):
 		    xmid = int(x/2)
             # shortest certesian direction dictates where square cut off will occur
 		    if x<y:
-		        cropim = imgray[:,ymid-xmid:ymid+xmid,0]
+		        cropim = im[:,ymid-xmid:ymid+xmid,0]
 		    else:
-		        cropim = imgray[xmid-ymid:xmid+ymid,:,0]
+		        cropim = im[xmid-ymid:xmid+ymid,:,0]
 
 		    plt.imsave('./static/'+full_filename,cropim,cmap='gray')
 
 		if filtertype == 'dx':
             #gradient in x direction along each x 1D array
-		    imx = np.zeros(imgray.shape)
+		    imx = np.zeros(im.shape)
 		    for i in list(range(0,y)):
-		        imx[:,i,0] = np.gradient(imgray[:,i,0],0.1)
+		        imx[:,i,0] = np.gradient(im[:,i,0],0.1)
 		    
 		    plt.imsave('./static/'+full_filename,imx[:,:,0],cmap='gray')
 
 		if filtertype == 'dy':
             #gradient in y dir, along eeach 1d array
-		    imy = np.zeros(imgray.shape)
+		    imy = np.zeros(im.shape)
 		    for i in list(range(0,x)):
-		        imy[i,:,0] = np.gradient(imgray[i,:,0],0.1)
+		        imy[i,:,0] = np.gradient(im[i,:,0],0.1)
 		    plt.imsave('./static/'+full_filename,imy[:,:,0],cmap='gray')
 
 		if filtertype == 'rotate':
             # rotation in degrees
-		    rotgray = ndimage.rotate(imgray,filterval)
-		    plt.imsave('./static/'+full_filename,rotgray[:,:,0],cmap='gray')
+		    rotgray = ndimage.rotate(im,filterval)
+		    plt.imsave('./static/'+full_filename,rotgray[:,:,0],cmap='bwr')
 
 		if filtertype == 'downsample':
             # this still needs work
 			intSampler = int(np.round(filterval))
-			imgrayDS=signal.decimate(imgray[:,:,0],intSampler)
+			imgrayDS=signal.decimate(im[:,:,0],intSampler)
 			plt.imsave('./static/'+full_filename,imgrayDS,cmap='gray')
 	## option to reset results with new query		
 	if request.method =="POST":
@@ -230,3 +235,18 @@ if __name__ == '__main__':
 	app.run(debug=True)
 	# app.run(debug=True, host = '0.0.0.0')
 
+# <option> <a href="{{url_for('imviewer', imagename = item['imagename'])}}">  {{ item['imagename'], 'width', item['width'],'height', item['height']  }}</a> </option>
+# {% e
+
+
+
+# <h5>CLICK TO VIEW QUERIED IMAGES</h5>
+# <select id="ddlViewBy">
+# {% for item in data %}
+#     <option  value="{{item.imagename}}">   {{ item['imagename'], 'width', item['width'],'height', item['height']  }}</option>
+# {% endfor %}
+# </select>
+
+
+# <button type="button" onclick="window.location.href='{{url_for('imviewer', imagename = value)}}'">
+# {% endblock %}
