@@ -5,12 +5,7 @@
             <li><a href="{{ url_for('imageProcessing1') }}">Image Processing Form</a></li>
           </ul>
   </head>
-  <body>
 
-  
-  <img id="picture" src="data:image/jpeg;base64,{{ img_data }}">
-
-  </body>
 
 </html>
 
@@ -41,5 +36,16 @@
 		<input class="btn btn-default" type="submit" value="Process!">
 	</form>
 </div>
+
+
+
+<body>
+
+  
+	<img id="picture" src="data:image/jpeg;base64,{{ img_data }}">
+  
+	</body>
+
+
 </body>
 {% endblock %}
