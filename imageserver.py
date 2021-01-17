@@ -61,8 +61,8 @@ def get_db():
 
 
 
-	# client = MongoClient()
-	client = MongoClient('mongodb://mongodb:27017/')
+	client = MongoClient()
+	# client = MongoClient('mongodb://mongodb:27017/')
 	db = client.imagedb
 	im_path_list = get_image_list()
 	meta_list = []
@@ -87,8 +87,14 @@ db, meta_list = get_db()
 
 
 # app = Flask(__name__,static_url_path='/static')
-app = Flask(__name__)
-app.secret_key = 'some_secret'
+# app = Flask(__name__)
+# app.secret_key = 'some_secret'
+
+def create_app():
+    app = Flask(__name__)
+
+    return app
+app = create_app()
 
 @app.route('/',methods = ["GET","POST"])
 def homePage():
@@ -251,6 +257,7 @@ class ImageServerException(Exception):
 if __name__ == '__main__':
 
 	# app.run(debug=True)
+	
 	app.run(debug=True, host = '0.0.0.0')
 
 # <option> <a href="{{url_for('imviewer', imagename = item['imagename'])}}">  {{ item['imagename'], 'width', item['width'],'height', item['height']  }}</a> </option>

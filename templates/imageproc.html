@@ -19,13 +19,14 @@
 <div class="container">
 	<br>
 	<h4>Enter image processing parameters</h4>
-	<h4>Filter types options: grayscale, lowpass, crop, dx, dy, downsample, rotate</h4>
-	<h4> Filter value will be required for 'lowpass' (pixel standard deviation), 'downsample', or 'rotate'(angle in degrees). </h4>
+	<h4>Filter types options: Grayscale, Lowpass Filter, Gradient in X or Y direction(dx or dy), Image Rotation</h4>
+	<h4> Filter value will be required for 'lowpass' (pixel standard deviation) or 'rotate'(angle in degrees). </h4>
+	<h4> FYI: In practice, images are often converted to grayscale anyway for processing tasks!</h4>
 	<br>
 	<form action="" method="post">
 		<select name="imagename">
 			{% for item in data %}
-				<option  value="{{item.imagename}}">   {{ item['imagename'], 'width', item['width'],'height', item['height']  }}</option>
+				<option  value="{{item.imagename}}">   {{ item['imagename']}}</option>
 			{% endfor %}
 		</select>
 		<select name="filtertype">
