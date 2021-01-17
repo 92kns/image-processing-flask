@@ -1,10 +1,24 @@
 # image-processing-server (W.I.P)
-imaging processing server using a set of curated images
+A flask server that can perform image processing tasks or let you browse by pixel dimensions.
 
+## Usage
+The simplest way would to be to have `docker` & `docker-compose installed` and simply run
 
-imageserver.py has most things. Home page lists all the jpg files and you can fill in the query form to go to 'image browsing' and have the option to refresh the page with additional queries.
+```bash
+docker-compose up --build
+```
+
+and go to the appropriate localhost (default at the moment is port 5000)
+
+Alternatively you *could* run it without docker but it's not as fun. (instructions TBC)
+
+## pics of server 
+
+So the home page lists all the jpg files and you can fill in the query form (by pixel dimensions) to browse what images fit that criteria.
 
 the image processing form similary lets you type in the image processing filters you desire.
 
 Implemented functions: grayscale, lowpass filter, square cropping, dx and dy gradients, and rotation.
+
+image meta data is stored with MongoDB and pymongo API is used. Image processing tasks are done via a combination of numpy, scipy, and PIL. 
 
