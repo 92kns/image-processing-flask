@@ -129,6 +129,11 @@ def imageBrowser(max_width,max_height):
 	print(queryPics.count())
 	return render_template("piclist.html",data=queryPics)
 
+@app.route('/imviewer/<string:imagename>', methods =["GET","POST"])
+def imviewer(imagename):
+	return render_template('viewimage.html', full_file = '/static/'+imagename+'.jpg')
+
+
 @app.route('/image',methods = ["GET","POST"])
 def imageProcessing1():
     #first form page for query parameters before going to main image processing functions
@@ -142,6 +147,7 @@ def imageProcessing1():
 
 @app.route('/image/<string:imagename>/<string:filtertype>/<string:filterval>',methods = ["GET","POST"])
 def imageProcessing2(imagename,filtertype,filterval):
+	
 	#main image processing function
 
 # read in function then compute RGB channel averages to get gray scale
