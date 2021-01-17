@@ -10,7 +10,7 @@ docker-compose up --build
 
 and go to the appropriate localhost (default at the moment is port 5000)
 
-Alternatively you *could* run it without docker but it's not as fun. (instructions TBC)
+Alternatively you *could* run it without docker but it's not as cool! (instructions TBD)
 
 ## pics of server 
 
