@@ -16,20 +16,28 @@
 
 
 {% block body %}
-<body>
-
 <div class="container">
 	<br>
-	<h4>Enter image processing parameters for a different image if desired</h4>
+	<h4>Enter image processing parameters</h4>
 	<h4>Filter types options: grayscale, lowpass, crop, dx, dy, downsample, rotate</h4>
 	<h4> Filter value will be required for 'lowpass' (pixel standard deviation), 'downsample', or 'rotate'(angle in degrees). </h4>
-
 	<br>
-	<form action="" class="form-inline" method="post">
-		<input type="text" class="form-control" placeholder = "Image name" name="imagename" value="{{request.form.imagename}}">
-		<input type="text" class="form-control" placeholder = "Filter type" name="filtertype" value="{{request.form.filtertype}}">
-		<input type="text" class="form-control" placeholder = "Filter value" name="filterval" value="{{request.form.filterval}}">
-		<input class="btn btn-default" type="submit" value="Go" >
+	<form action="" method="post">
+		<select name="imagename">
+			{% for item in data %}
+				<option  value="{{item.imagename}}">   {{ item['imagename'], 'width', item['width'],'height', item['height']  }}</option>
+			{% endfor %}
+		</select>
+		<select name="filtertype">
+			<option  value="grayscale"> grayscale  </option>
+			<option  value="lowpass"> lowpass  </option>
+			<option  value="dx"> dx  </option>
+			<option  value="dy"> dy </option>
+			<option  value="rotate"> rotate  </option>
+		</select>
+
+		<input type="number" min=0 value=0 class="form-control" placeholder = "Filter value" name="filterval" value="{{request.form.filterval}}">
+		<input class="btn btn-default" type="submit" value="Process!">
 	</form>
 </div>
 </body>

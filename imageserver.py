@@ -94,21 +94,7 @@ def homePage():
 
 @app.route('/list/max_width_<int:max_width>_max_height_<int:max_height>',methods = ["GET","POST"])
 def imageBrowser(max_width,max_height):
-	# queryPics=[] # initialize empty list
-	
-	#find all pictures meeting criteria
-	# for pics in db.imagedb.find():
-	# 	# if (pics['width'] < max_width) and (pics['width']*pics['height']>max_height) and (1000.0*pics['size']/(pics['width']*pics['height']) > mbpp):
-	# 	if (pics['width'] <= max_width) and (pics['height'] <= max_height):
-			
-	# 		temp_dict = {
-	# 			'imagename':pics['imagename'],
-	# 			'width':pics['width'],
-	# 			'height':pics['height']
 
-	# 		}
-	# 		queryPics.append(pics['imagename'])
-	# 		# queryPics.append[temp_dict]
 
 	# query database given max height and width
 	dimension_query = { 'height': {  '$lt': max_height }, 'width': {  '$lt': max_width }  }
@@ -148,13 +134,14 @@ def imageProcessing1():
 		filterval=request.form['filterval']
 		return redirect(url_for("imageProcessing2", imagename = picname, filtertype = filtertype, filterval= filterval))
 
-	return render_template("processing_form.html")
+	return render_template("processing_form.html", data= meta_list)
 
 @app.route('/image/<string:imagename>/<string:filtertype>/<string:filterval>',methods = ["GET","POST"])
 def imageProcessing2(imagename,filtertype,filterval):
 	
 	#main image processing function
-
+	# for i in range(100):
+	# 	('AM I IN HERE?')
 # read in function then compute RGB channel averages to get gray scale
 	path2file = os.path.join('./static',imagename+'.jpg')
 	im = plt.imread(path2file)
@@ -165,7 +152,7 @@ def imageProcessing2(imagename,filtertype,filterval):
 
 	# filtertype = 'downsample'
     # use new full_filename for saving images to be used in template
-	full_filename = 'filtered_'+filtertype+'_'+imagename+'_'+filterval+'.jpg'
+	# full_filename = 'filtered_'+filtertype+'_'+imagename+'_'+filterval+'.jpg'
 	filterval = float(filterval)
 	if request.method=="GET":
 		if filtertype=='grayscale':
@@ -181,16 +168,16 @@ def imageProcessing2(imagename,filtertype,filterval):
 		    # processed_im = processed_im[:,:,0]
 		    
 		    # plt.imsave('./static/'+full_filename,blurredIm,cmap='gray')
-		if filtertype == 'crop':
-            #approx coords for center pixel
-		    ymid = int(y/2)
-		    xmid = int(x/2)
-            # shortest certesian direction dictates where square cut off will occur
-		    if x<y:
-		        processed_im= imgray[:,ymid-xmid:ymid+xmid,0]
-		    else:
-		        processed_im = imgray[xmid-ymid:xmid+ymid,:,0]
-		    processed_im = processed_im[:,:,0]
+		# if filtertype == 'crop':
+        #     #approx coords for center pixel
+		#     ymid = int(y/2)
+		#     xmid = int(x/2)
+        #     # shortest certesian direction dictates where square cut off will occur
+		#     if x<y:
+		#         processed_im= imgray[:,ymid-xmid:ymid+xmid,0]
+		#     else:
+		#         processed_im = imgray[xmid-ymid:xmid+ymid,:,0]
+		#     processed_im = processed_im[:,:,0]
 
 		    # plt.imsave('./static/'+full_filename,cropim,cmap='gray')
 
@@ -240,7 +227,7 @@ def imageProcessing2(imagename,filtertype,filterval):
 		return redirect(url_for("imageProcessing2", imagename = picname, filtertype = filtertype, filterval= filterval))	
 
 	# return full_filename image to server
-	return render_template('imageproc.html', full_file = '/static/'+full_filename, img_data=encoded_img_data.decode('utf-8'))
+	return render_template('imageproc.html',  img_data=encoded_img_data.decode('utf-8'),data= meta_list)
 
 # help debug and seperate out specific exceptions
 class ImageServerException(Exception):
