@@ -1,4 +1,4 @@
-
+{% extends 'base.html' %}
 {% block content %}
 <body>
           <ul class="menu">
@@ -10,16 +10,17 @@
 	<h4>Enter image browsing parameters</h4>
 	<br>
 	<form action="" class="form-inline" method="post">
-		<input type="number" step="any" class="form-control-height" placeholder = "Max Width" name="max_width" value="{{request.form.max_width}}">
-		<input type="number" step="any" class="form-control-width" placeholder = "Max Height" name="max_height" value="{{request.form.max_height}}">
+		<input type="number" step="any" min = 0 class="form-control-height" placeholder = "Max Width" name="max_width" value="{{request.form.max_width}}">
+		<input type="number" step="any" min = 0 class="form-control-width" placeholder = "Max Height" name="max_height" value="{{request.form.max_height}}">
 		<!-- <input type="number" step="any" class="form-control" placeholder = "min bits per pixel" name="min_bits_per_pix" value="{{request.form.min_bits_per_pix}}"> -->
 		<input id = "btn" class="btn btn-default" type="submit" value="Query Images!">
 	</form>
 </div>
 </body>
-{% endblock %}
+
 
 <h5>IMAGES TO CHOOSE FROM</h5>
 {% for item in data %}
     <p> {{ item['imagename'], 'width', item['width'],'height', item['height']  }} </p>
 {% endfor %}
+{% endblock %}

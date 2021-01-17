@@ -9,7 +9,7 @@ import os
 import glob
 
 from PIL import Image
-
+# ------------ db stuff
 def get_image_metadata(filename):
 	# the Image.open method conveniently does not fully load the image into memory
 	# thus easy to quickly grab metadata without burden if it was a really big image!
@@ -30,21 +30,43 @@ def get_image_list():
 	return im_path_list
 
 client = MongoClient()
+
 db = client.imagedb
+db.imagedb.delete_many({})
 im_path_list = get_image_list()
 
+# init the db
 meta_list = []
 for i in im_path_list:
 	meta_data_dump = get_image_metadata(i)
 	meta_list.append(meta_data_dump)
 	db.imagedb.insert_one(meta_data_dump)
 
-# refactor this ugly list
-listOfNames = []
+print('START OFF WITH???')
+print(db.imagedb.count_documents({}))
 
-for a in db.imagedb.find():
-	listOfNames.append(a['imagename'])
-# DB stuff above
+print(db.imagedb.count_documents({}))
+def get_db():
+	client = MongoClient()
+	db = client.imagedb
+	im_path_list = get_image_list()
+	meta_list = []
+	for i in im_path_list:
+		meta_data_dump = get_image_metadata(i)
+		meta_list.append(meta_data_dump)
+		db.imagedb.insert_one(meta_data_dump)
+	return db
+
+# -=------------------- end db stuff
+
+
+
+# refactor this ugly list
+# listOfNames = []
+
+# for a in db.imagedb.find():
+# 	listOfNames.append(a['imagename'])
+# # DB stuff above
 
 
 app = Flask(__name__,static_url_path='/static')
@@ -59,36 +81,52 @@ def homePage():
 		# min_bits_per_pix = request.form['min_bits_per_pix']
 
 		if max_width == '' or max_height == '':
-			flash('BAD')
+			# flash('BAD')
 			return render_template("pleasegoback.html")
 		return redirect(url_for('imageBrowser', max_width = max_width, max_height=max_height))
+	
 	return render_template("piclist.html",data=meta_list)
 
 @app.route('/list/max_width_<int:max_width>_max_height_<int:max_height>',methods = ["GET","POST"])
 def imageBrowser(max_width,max_height):
-	queryPics=[] # initialize empty list
+	# queryPics=[] # initialize empty list
 	
 	#find all pictures meeting criteria
-	for pics in db.imagedb.find():
-		# if (pics['width'] < max_width) and (pics['width']*pics['height']>max_height) and (1000.0*pics['size']/(pics['width']*pics['height']) > mbpp):
-		if (pics['width'] <= max_width) and (pics['height'] <= max_height):
-		
-			queryPics.append(pics['imagename'])
+	# for pics in db.imagedb.find():
+	# 	# if (pics['width'] < max_width) and (pics['width']*pics['height']>max_height) and (1000.0*pics['size']/(pics['width']*pics['height']) > mbpp):
+	# 	if (pics['width'] <= max_width) and (pics['height'] <= max_height):
+			
+	# 		temp_dict = {
+	# 			'imagename':pics['imagename'],
+	# 			'width':pics['width'],
+	# 			'height':pics['height']
+
+	# 		}
+	# 		queryPics.append(pics['imagename'])
+	# 		# queryPics.append[temp_dict]
+
+	# query database given max height and width
+	dimension_query = { 'height': {  '$lt': max_height }, 'width': {  '$lt': max_width }  }
+	queryPics = db.imagedb.find(dimension_query)
+
 	
-	#option to refresh page based on new query parameters
+	#option to refresh page based on new query parameters if another POST instance is received while already done querying
 	if request.method=="POST":
+		
 		max_width = request.form['max_width']
 		max_height = request.form['max_height']
 		# min_bits_per_pix = request.form['min_bits_per_pix']
 		if max_width == '' or max_height == '':
-			flash('BAD')
+			# flash('BAD')
 			return render_template("pleasegoback.html") 
 		return redirect(url_for('imageBrowser', max_width = max_width, max_height=max_height))
 
-	print(queryPics)
-	print('hereereere')
+	# print(queryPics)
+	# print('hereereere')
 
-	
+	# print(set(queryPics))
+	print('what the heck??')
+	print(queryPics.count())
 	return render_template("piclist.html",data=queryPics)
 
 @app.route('/image',methods = ["GET","POST"])
