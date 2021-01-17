@@ -46,20 +46,19 @@ for i in im_path_list:
 	meta_list.append(meta_data_dump)
 	db.imagedb.insert_one(meta_data_dump)
 
-print('START OFF WITH???')
 print(db.imagedb.count_documents({}))
+# def get_db():
+# 	client = MongoClient()
+# 	db = client.imagedb
+# 	im_path_list = get_image_list()
+# 	meta_list = []
+# 	for i in im_path_list:
+# 		meta_data_dump = get_image_metadata(i)
+# 		meta_list.append(meta_data_dump)
+# 		db.imagedb.insert_one(meta_data_dump)
+# 	return db, meta_list
 
-print(db.imagedb.count_documents({}))
-def get_db():
-	client = MongoClient()
-	db = client.imagedb
-	im_path_list = get_image_list()
-	meta_list = []
-	for i in im_path_list:
-		meta_data_dump = get_image_metadata(i)
-		meta_list.append(meta_data_dump)
-		db.imagedb.insert_one(meta_data_dump)
-	return db
+# db, meta_list = get_db()
 
 # -=------------------- end db stuff
 
@@ -122,6 +121,7 @@ def imageBrowser(max_width,max_height):
 
 @app.route('/imviewer', methods =["GET","POST"])
 def imviewer():
+	imagename=request.form['imagename']
 	return render_template('viewimage.html', full_file = '/static/'+imagename+'.jpg')
 
 
