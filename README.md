@@ -1,5 +1,6 @@
 # Image Processing Server
 Note: Presently, the application is deployed to google cloud compute engine [LINK](http://35.188.46.22/) (disclaimer: still learning how to do this properly!)
+It some times times-out. Not entirely sure why yet. If that happens to you try it on another device or wait patiently please?! Or come back maybe an hour later!
 
 Welcome! This is a flask application that can perform image processing tasks or let you browse by pixel dimensions. 
 
