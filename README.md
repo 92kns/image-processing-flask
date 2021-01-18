@@ -1,7 +1,7 @@
 # Image Processing Server
-Note: Presently, the application is deployed to google cloud compute engine [LINK](http://35.188.46.22/) (disclaimer: still learning how to do this properly!)
+Note: Presently, the application is deployed to google cloud compute engine [LINK](http://35.188.46.22/) (disclaimer: still learning how to do this properly!). Alternate [LINK](http://35.225.15.58/) if that one doesn't work
 
-**It some times times-out. Not entirely sure why yet. If that happens to you try it on another device or wait patiently please?! Or come back maybe an hour later!**
+**It some times times-out. Not entirely sure why yet. If that happens to you with BOTH links, try it on another device or wait patiently please?! Or come back maybe an hour later!**
 
 
 ## Welcome!
