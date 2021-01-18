@@ -1,3 +1,5 @@
+# testing script, useless now but good reference for me 
+
 mkdir db # for mongo
 
 
