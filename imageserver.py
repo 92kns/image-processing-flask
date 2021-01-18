@@ -11,7 +11,7 @@ import glob
 from PIL import Image
 import base64
 import io
-# ------------ db stuff
+
 
 
 
@@ -34,7 +34,9 @@ def get_image_list():
 	im_path_list = glob.glob(os.path.join(cwd,im_static,'*jpg'))
 	return im_path_list
 
+# ------------ db stuff
 def get_db():
+	# initialize DB
 
 	# client = MongoClient()
 	client = MongoClient('mongodb://mongodb:27017/')
@@ -49,8 +51,7 @@ def get_db():
 
 db, meta_list = get_db()
 
-
-
+# ------------ make app, basic
 def create_app():
     app = Flask(__name__)
 
@@ -115,9 +116,7 @@ def imageProcessing1():
 def imageProcessing2(imagename,filtertype,filterval):
 	
 	#main image processing function
-	# for i in range(100):
-	# 	('AM I IN HERE?')
-# read in function then compute RGB channel averages to get gray scale
+
 	path2file = os.path.join('./static',imagename+'.jpg')
 	im = plt.imread(path2file)
 	im.dtype='uint8' #just in case frce 0, 255 channels
@@ -125,9 +124,7 @@ def imageProcessing2(imagename,filtertype,filterval):
 	imgray=im.mean(axis=-1,keepdims=1)
 	cmap_type = 'bwr'
 
-	# filtertype = 'downsample'
-    # use new full_filename for saving images to be used in template
-	# full_filename = 'filtered_'+filtertype+'_'+imagename+'_'+filterval+'.jpg'
+
 	filterval = float(filterval)
 	if request.method=="GET":
 		if filtertype=='grayscale':
@@ -135,26 +132,11 @@ def imageProcessing2(imagename,filtertype,filterval):
 			processed_im = imgray[:,:,0] #im.mean(axis=-1,keepdims=1)
 			
 			cmap_type = 'gray'
-			# plt.imsave('./static/'+full_filename,imgray[:,:,0],cmap='gray')
-		if filtertype == 'lowpass':
-			 # standard deviation for the gaussian filter, then fft convolve it with image
-		    # kernel = np.outer(signal.gaussian(x, filterval), signal.gaussian(y, filterval))
-		    processed_im = ndimage.gaussian_filter(input=im,sigma=filterval)
-		    # processed_im = processed_im[:,:,0]
-		    
-		    # plt.imsave('./static/'+full_filename,blurredIm,cmap='gray')
-		# if filtertype == 'crop':
-        #     #approx coords for center pixel
-		#     ymid = int(y/2)
-		#     xmid = int(x/2)
-        #     # shortest certesian direction dictates where square cut off will occur
-		#     if x<y:
-		#         processed_im= imgray[:,ymid-xmid:ymid+xmid,0]
-		#     else:
-		#         processed_im = imgray[xmid-ymid:xmid+ymid,:,0]
-		#     processed_im = processed_im[:,:,0]
 
-		    # plt.imsave('./static/'+full_filename,cropim,cmap='gray')
+		if filtertype == 'lowpass':
+			# use gaussian convolution with a provided standard deviation
+
+		    processed_im = ndimage.gaussian_filter(input=im,sigma=filterval)
 
 		if filtertype == 'dx':
             #gradient in x direction along each x 1D array
@@ -163,37 +145,32 @@ def imageProcessing2(imagename,filtertype,filterval):
 		        processed_im[:,i,0] = np.gradient(imgray[:,i,0],0.1)
 		    
 		    processed_im = processed_im[:,:,0]
-		    # plt.imsave('./static/'+full_filename,imx[:,:,0],cmap='gray')
+		    
 
 		if filtertype == 'dy':
-            #gradient in y dir, along eeach 1d array
+            #gradient in y dir, along each 1d array
 		    processed_im = np.zeros(im.shape)
 		    for i in list(range(0,x)):
 		        processed_im[i,:,0] = np.gradient(imgray[i,:,0],0.1)
 
 		    processed_im = processed_im[:,:,0]
-		    # plt.imsave('./static/'+full_filename,imy[:,:,0],cmap='gray')
+		   
 
 		if filtertype == 'rotate':
             # rotation in degrees
 		    processed_im = ndimage.rotate(im,filterval)
 		    processed_im = processed_im[:,:,0]
-		    # plt.imsave('./static/'+full_filename,rotgray[:,:,0],cmap='bwr')
+		  
 
-
-		# plt.imsave('./static/'+full_filename,processed_im,cmap=cmap_type)
-
-		
 
 		# stash image in memory rather than writing to disk
 		# use PIL and IO encoding
 		proc_im_pil = Image.fromarray(processed_im).convert('RGB')
-		# if proc_im_pil.mode != 'RGB':
-		# 	proc_im_pil = proc_im_pil.convert('RGB')
 		data = io.BytesIO()
 		proc_im_pil.save(data, "JPEG")
 		encoded_img_data = base64.b64encode(data.getvalue())
-		# encoded_img_data
+
+
 	## pseudo refresh page - > option to reset results with new query-> then render filter		
 	if request.method =="POST":
 		picname = request.form['imagename']
@@ -215,18 +192,3 @@ if __name__ == '__main__':
 	
 	app.run(debug=True, host = '0.0.0.0')
 
-# <option> <a href="{{url_for('imviewer', imagename = item['imagename'])}}">  {{ item['imagename'], 'width', item['width'],'height', item['height']  }}</a> </option>
-# {% e
-
-
-
-# <h5>CLICK TO VIEW QUERIED IMAGES</h5>
-# <select id="ddlViewBy">
-# {% for item in data %}
-#     <option  value="{{item.imagename}}">   {{ item['imagename'], 'width', item['width'],'height', item['height']  }}</option>
-# {% endfor %}
-# </select>
-
-
-# <button type="button" onclick="window.location.href='{{url_for('imviewer', imagename = value)}}'">
-# {% endblock %}
