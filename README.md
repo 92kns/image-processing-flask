@@ -1,7 +1,7 @@
 # Image Processing Server
 Note: Presently, the application is deployed to google cloud compute engine [LINK](http://35.188.46.22/) (disclaimer: still learning how to do this properly!)
 
-A flask server that can perform image processing tasks or let you browse by pixel dimensions.
+Welcome! This is a flask application that can perform image processing tasks or let you browse by pixel dimensions. 
 
 ## Using locally
 The simplest way would to be to have `docker` & `docker-compose` installed and running the following commands
