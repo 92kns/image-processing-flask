@@ -11,7 +11,7 @@ docker-compose up --build
 ```
 
 followed by going to the appropriate localhost (default at the moment is port 5000)
-
+By default the dockerfile is not running on a production server when locally. I am using waitress to run a light weight production server on gcp though
 
 
 ## Example usage/steps:

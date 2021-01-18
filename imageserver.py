@@ -38,8 +38,8 @@ def get_image_list():
 def get_db():
 	# initialize DB
 
-	client = MongoClient()
-	# client = MongoClient('mongodb://mongodb:27017/')
+	# client = MongoClient()
+	client = MongoClient('mongodb://mongodb:27017/')
 	db = client.imagedb
 	im_path_list = get_image_list()
 	meta_list = []
