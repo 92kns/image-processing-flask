@@ -1,5 +1,5 @@
 # Image Processing Server
-Note: Presently, the application is deployed to google cloud compute engine [LINK](http://35.188.46.22/)
+Note: Presently, the application is deployed to google cloud compute engine [LINK](http://35.188.46.22/) (disclaimer: still learning how to do this properly!)
 
 A flask server that can perform image processing tasks or let you browse by pixel dimensions.
 
@@ -30,7 +30,7 @@ followed by going to the appropriate localhost (default at the moment is port 50
 ![step3](./readme_pics/step3.jpg)
 
 ### <u>Now the fun stuff, image processing!</u>
-![step4](./readme_pics/step4.jpg)
+![step4](./readme_pics/step4-2.jpg)
 
 ### <u> Implemented functions: grayscale, lowpass filter, square cropping, dx and dy gradients, and rotation. </u>
 ### <u>Select an image and filter from the drop down. If applicable enter a filter value</u>
