@@ -1,4 +1,6 @@
-# image-processing-server (W.I.P)
+# image-processing-server
+Presently, the application is deployed to google cloud app engine [LINK](http://35.188.46.22/)
+
 A flask server that can perform image processing tasks or let you browse by pixel dimensions.
 
 ## Usage
