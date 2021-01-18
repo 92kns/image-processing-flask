@@ -3,7 +3,9 @@ Note: Presently, the application is deployed to google cloud compute engine [LIN
 
 **It some times times-out. Not entirely sure why yet. If that happens to you try it on another device or wait patiently please?! Or come back maybe an hour later!**
 
-Welcome! This is a flask application that can perform image processing tasks or let you browse by pixel dimensions. 
+
+## Welcome!
+This is a flask application that can perform image processing tasks or let you browse by pixel dimensions. 
 
 ## Using locally
 If you don't want to go to the above GCP-hosted link and want to use it locally, the simplest way would to be to have `docker` & `docker-compose` installed and running the following command
