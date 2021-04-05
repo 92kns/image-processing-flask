@@ -1,8 +1,9 @@
 # Image Processing Server
 ~~Note: Presently, the application is deployed to google cloud compute engine [LINK] (disclaimer: still learning how to do this properly!). Alternate [LINK] if that one doesn't work~~
-Taken down
 
-**It some times times-out. Not entirely sure why yet. If that happens to you with BOTH links, try it on another device or wait patiently please?! Or come back maybe an hour later!**
+~~**It some times times-out. Not entirely sure why yet. If that happens to you with BOTH links, try it on another device or wait patiently please?! Or come back maybe an hour later!**~~
+
+I've taken it down
 
 
 ## Welcome!
