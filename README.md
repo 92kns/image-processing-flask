@@ -3,7 +3,7 @@
 
 ~~**It some times times-out. Not entirely sure why yet. If that happens to you with BOTH links, try it on another device or wait patiently please?! Or come back maybe an hour later!**~~
 
-I've taken it down
+I've taken it down, my GCP trial has ended!
 
 
 ## Welcome!
